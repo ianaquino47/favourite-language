@@ -10,17 +10,25 @@ In order to set it up on your own computer:
 
 First, fork and/or clone this repository using ```git clone```.
 
-Then, run these commands to install:
-
-
-To run the test:
+Then, run this command to install:
 ```bash
-
+> npm install
 ```
-To start the server (http://localhost:3000/)
+To start the live server and open app
 ```bash
-
+> live-server --open=index.html
 ```
+
+To run the feature test (cypress):
+```bash
+> npx cypress open
+```
+
+To run the unit tests (jasmine):
+```bash
+> open open SpecRunner.html 
+```
+
 
 
   

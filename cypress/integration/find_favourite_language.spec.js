@@ -8,9 +8,6 @@ describe('Find favourite language', () => {
       cy.get('[data-testid="sendButton"]')
         .click();
   
-      cy.get('[data-testid="userNameText"]')
-        .should('have.value', '');
-  
       cy.contains('Ruby');
     });
   });
