@@ -7,36 +7,44 @@ const client_id = "f2a259d526eb109abdc6";
 const client_secret = "92777e702b85a26f073b9db147ed62bab2729b5d";
 
 const getRepos = async (username) => {
-    //list of all user repositories
     let repos = [];
 
-    //initial api call
-    const api_call = await fetch(`https://api.github.com/users/${username}/repos?client_id=${client_id}&client_secret=${client_secret}&per_page=100`); 
-    //convert to json
-    const data = await api_call.json();
-    //linkHeader (exists if more than 100 repositories)
-    const linkHeader = api_call.headers.get("link");
+    //initial call
+    const call = await fetchApi(`https://api.github.com/users/${username}/repos?client_id=${client_id}&client_secret=${client_secret}&per_page=100`);
+    const data = call.data;
+
+    //a linkheader exists if a user has more than 100 repos
+    const linkHeader = call.linkHeader;
 
     //get list of repos
     repos = [...data.map(repo => repo.language)]
 
     //check if more than 100 repos
-    checkForMoreRepos(linkHeader, repos);
+    if (linkHeader) {
+        checkForMoreRepos(linkHeader, repos);
+    }
 
-    //return list of repositories
+    // return list of repositories
     return(repos);
 }
 
-const checkForMoreRepos = (linkHeader, repos) => {
-    if (linkHeader) {
-        const new_link = getLinkForNextPage(linkHeader);
-        fetchApi(new_link).then((res) => {
-            const newdata = res.data.map(repo => repo.language);
-            repos.push(...newdata);
-        })
-    };
+const checkForMoreRepos = async (linkHeader, repos) => {
+    //gets how many times to loop
+    const str = linkHeader.split(",")[1].split(";")[0].substr(-2,1);
+    const lastPage = parseInt(str);
+    const times = lastPage;
+
+    var new_link = getLinkForNextPage(linkHeader);
+    for(var i=1; i < times; i++){
+        const result = await fetchApi(new_link);
+        const newdata = result.data.map(repo => repo.language);
+        repos.push(...newdata);
+        const linkHeader = result.linkHeader;
+        new_link = getLinkForNextPage(linkHeader);
+    }
 }
 
+//gets the link for the next page of repos from linkheader
 const getLinkForNextPage = (linkHeader) => {
     links = linkHeader.split(",");
     urls = links.map( link => {
@@ -45,43 +53,38 @@ const getLinkForNextPage = (linkHeader) => {
             title: link.split(";")[1].trim()
         };
     })
-
+    
     urls.forEach(element => {
-        if (!element.title.includes("next")) {
-            return;
+        if (element.title.includes("next")) {
+            nextLink = element.url;
         }
-        nextLink = element.url;
     });
 
-    if (typeof nextLink !== 'undefined') {
-        return(nextLink);
-    };
+    return(nextLink);
 }
 
 const fetchApi = async (api_link) => {
     const api_call = await fetch(`${api_link}`);    
     const data = await api_call.json();
-    return { data }
+    const linkHeader = api_call.headers.get("link");
+    return { data, linkHeader};
 }
 
 
 const showFavLanguage = async () => {
-        const res = await getRepos(inputValue.value);
-        console.log(res);
-        const count = await res.reduce(function (acc, curr) {
-            if (typeof acc[curr] == 'undefined') {
-                acc[curr] = 1;
-            } else {
-                acc[curr] += 1;
-            }
-    
+        const languages = await getRepos(inputValue.value);
+
+        //tallies occurence of language
+        const count = await languages.reduce(function (acc, curr) {
+            acc[curr] ? acc[curr]++ : acc[curr] = 1;
             return acc;
         }, {});
 
-    
+        //compares occurences 
         const favLanguage = Object.keys(count).reduce((a,b) => count[a] > count[b] ? a : b);
     
         nameContainer.innerHTML = `Your favourite language is <span><strong>${favLanguage}</strong></span>.`
+        console.log(languages);
 }
 
 searchButton.addEventListener("click", () => {
