@@ -26,7 +26,7 @@ To run the feature test (cypress):
 
 To run the unit tests (jasmine):
 ```bash
-> open open SpecRunner.html 
+> open SpecRunner.html 
 ```
 
 
