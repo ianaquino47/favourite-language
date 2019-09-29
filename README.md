@@ -24,10 +24,6 @@ To run the feature test (cypress):
 > npx cypress open
 ```
 
-To run the unit tests (jasmine):
-```bash
-> open SpecRunner.html 
-```
 
 
 

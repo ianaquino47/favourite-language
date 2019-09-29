@@ -80,6 +80,8 @@ const showFavLanguage = async () => {
             return acc;
         }, {});
 
+        console.log(count);
+
         //compares occurences 
         const favLanguage = Object.keys(count).reduce((a,b) => count[a] > count[b] ? a : b);
     
