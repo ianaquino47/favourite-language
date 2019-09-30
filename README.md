@@ -16,7 +16,7 @@ Then, run this command to install:
 ```
 To start the live server and open app
 ```bash
-> live-server --open=index.html
+> live-server --port=5500 --open=index.html
 ```
 
 To run the feature test (cypress):
@@ -27,4 +27,4 @@ To run the feature test (cypress):
 
 
 
-  
+
