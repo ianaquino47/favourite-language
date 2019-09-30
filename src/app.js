@@ -92,5 +92,6 @@ const showFavLanguage = async () => {
 }
 
 searchButton.addEventListener("click", () => {
+    nameContainer.innerHTML = `Thinking...`;
     showFavLanguage();
 })
