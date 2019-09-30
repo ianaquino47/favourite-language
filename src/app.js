@@ -21,7 +21,7 @@ const getRepos = async (username) => {
 
     //check if more than 100 repos
     if (linkHeader) {
-        checkForMoreRepos(linkHeader, repos);
+        await checkForMoreRepos(linkHeader, repos);
     }
 
     // return list of repositories
@@ -72,7 +72,10 @@ const fetchApi = async (api_link) => {
 
 
 const showFavLanguage = async () => {
-        const languages = await getRepos(inputValue.value);
+        var languages = await getRepos(inputValue.value);
+
+        //filters null elements
+        languages = languages.filter( language => language !== null);
 
         //tallies occurence of language
         const count = await languages.reduce(function (acc, curr) {
@@ -86,7 +89,6 @@ const showFavLanguage = async () => {
         const favLanguage = Object.keys(count).reduce((a,b) => count[a] > count[b] ? a : b);
     
         nameContainer.innerHTML = `Your favourite language is <span><strong>${favLanguage}</strong></span>.`
-        console.log(languages);
 }
 
 searchButton.addEventListener("click", () => {
