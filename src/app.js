@@ -66,10 +66,12 @@ const getLinkForNextPage = (linkHeader) => {
 const fetchApi = async (api_link) => {
     const api_call = await fetch(`${api_link}`); 
     const data = await api_call.json();
+
     if (data.message != undefined) {
         nameContainer.innerHTML = `This user does not exist.`;
         throw new Error("This user does not exist.");
     }
+
     const linkHeader = api_call.headers.get("link");
     return { data, linkHeader};
 }
@@ -82,6 +84,13 @@ const showFavLanguage = async () => {
     //filters null elements
     languages = languages.filter( language => language !== null);
 
+    //gives error message if user has a public repo
+    if (languages.length == 0) {
+        nameContainer.innerHTML = `This user has no public repositories.`;
+        throw new Error("This user has no public repositories.");
+    }
+
+
     //tallies occurence of language
     const count = await languages.reduce(function (acc, curr) {
         acc[curr] ? acc[curr]++ : acc[curr] = 1;
@@ -89,6 +98,8 @@ const showFavLanguage = async () => {
     }, {});
 
     console.log(count);
+
+    console.log(languages);
 
     //compares occurences 
     const favLanguage = Object.keys(count).reduce((a,b) => count[a] > count[b] ? a : b);

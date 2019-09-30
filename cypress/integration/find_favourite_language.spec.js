@@ -12,4 +12,32 @@ describe('Find favourite language', () => {
   
       cy.contains('Ruby');
     });
+
+    it('Gives error message when user does not exist', () => {
+      cy.visit('http://127.0.0.1:5500/index.html');
+  
+      cy.get('[data-testid="userNameText"]')
+        .type('hfisruhfif');
+  
+      cy.get('[data-testid="sendButton"]')
+        .click();
+
+      cy.contains('Thinking...');
+  
+      cy.contains('This user does not exist.');
+    });
+
+    it('Gives error message when user does not have any public repository', () => {
+      cy.visit('http://127.0.0.1:5500/index.html');
+  
+      cy.get('[data-testid="userNameText"]')
+        .type('lololol');
+  
+      cy.get('[data-testid="sendButton"]')
+        .click();
+
+      cy.contains('Thinking...');
+  
+      cy.contains('This user has no public repositories.');
+    });
   });
