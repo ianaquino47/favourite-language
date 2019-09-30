@@ -7,6 +7,8 @@ describe('Find favourite language', () => {
   
       cy.get('[data-testid="sendButton"]')
         .click();
+
+      cy.contains('Thinking...');
   
       cy.contains('Ruby');
     });

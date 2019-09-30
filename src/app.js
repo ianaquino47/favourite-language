@@ -64,34 +64,43 @@ const getLinkForNextPage = (linkHeader) => {
 }
 
 const fetchApi = async (api_link) => {
-    const api_call = await fetch(`${api_link}`);    
+    const api_call = await fetch(`${api_link}`); 
     const data = await api_call.json();
+    if (data.message != undefined) {
+        nameContainer.innerHTML = `This user does not exist.`;
+        throw new Error("This user does not exist.");
+    }
     const linkHeader = api_call.headers.get("link");
     return { data, linkHeader};
 }
 
 
 const showFavLanguage = async () => {
-        var languages = await getRepos(inputValue.value);
+    var languages = await getRepos(inputValue.value);
 
-        //filters null elements
-        languages = languages.filter( language => language !== null);
 
-        //tallies occurence of language
-        const count = await languages.reduce(function (acc, curr) {
-            acc[curr] ? acc[curr]++ : acc[curr] = 1;
-            return acc;
-        }, {});
+    //filters null elements
+    languages = languages.filter( language => language !== null);
 
-        console.log(count);
+    //tallies occurence of language
+    const count = await languages.reduce(function (acc, curr) {
+        acc[curr] ? acc[curr]++ : acc[curr] = 1;
+        return acc;
+    }, {});
 
-        //compares occurences 
-        const favLanguage = Object.keys(count).reduce((a,b) => count[a] > count[b] ? a : b);
-    
-        nameContainer.innerHTML = `Your favourite language is <span><strong>${favLanguage}</strong></span>.`
+    console.log(count);
+
+    //compares occurences 
+    const favLanguage = Object.keys(count).reduce((a,b) => count[a] > count[b] ? a : b);
+
+    nameContainer.innerHTML = `Your favourite language is <span><strong>${favLanguage}</strong></span>.`
 }
 
 searchButton.addEventListener("click", () => {
+    if(inputValue.value == '') {
+        nameContainer.innerHTML = `Try again. You did not type any username!`;
+        throw new Error('Try again. You did not type any username!');
+    }
     nameContainer.innerHTML = `Thinking...`;
     showFavLanguage();
 })
